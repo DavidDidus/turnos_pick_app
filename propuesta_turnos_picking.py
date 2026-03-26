@@ -64,6 +64,17 @@ MAPEO_DIAS = {
 # =========================
 # FUNCIONES AUXILIARES
 # =========================
+
+def to_int_recursive(obj):
+    if isinstance(obj, dict):
+        return {k: to_int_recursive(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [to_int_recursive(v) for v in obj]
+    elif isinstance(obj, float):
+        return int(round(obj))  # 👈 clave
+    else:
+        return obj
+    
 def normaliza_demanda(d: Dict[str, float]) -> Dict[str, float]:
     out = {k: 0.0 for k in DIAS}
     for k, v in d.items():
@@ -240,17 +251,17 @@ def optimizar_tiempos_dotacion_variable_con_paridad(
             "ft_presentes": ft_presentes,
             "pt_presentes": pt_presentes,
             "workers": workers,
-            "demanda_cajas": demanda[d],
+            "demanda_cajas": to_int_recursive(demanda[d]),
             "ft_horas_dia": ft_horas_por_dia[d],
             "pt_horas_dia": pt_horas_dia,
-            "cap_base_cajas": cap_base,
+            "cap_base_cajas": to_int_recursive(cap_base),
             "ot_horas": ot_v[d],
             "ot_por_persona": ot_pp,
-            "cap_ot_cajas": cap_ot,
-            "cap_total_cajas": cap_tot,
-            "slack_cajas": slack,
-            "deficit_cajas": def_v[d],
-            "horas_faltantes": horas_f
+            "cap_ot_cajas": to_int_recursive(cap_ot),
+            "cap_total_cajas": to_int_recursive(cap_tot),
+            "slack_cajas": to_int_recursive(slack),
+            "deficit_cajas": to_int_recursive(def_v[d]),
+            "horas_faltantes": to_int_recursive(horas_f)
         }
 
         tot_def_boxes += def_v[d]
@@ -266,7 +277,7 @@ def optimizar_tiempos_dotacion_variable_con_paridad(
         "ot_por_dia": ot_v,
         "ot_por_persona_por_dia": ot_pp_por_dia,
         "ot_total_horas": tot_ot_hours,
-        "deficit_total_cajas": tot_def_boxes,
+        "deficit_total_cajas": to_int_recursive(tot_def_boxes),
         "horas_faltantes_totales": tot_def_hours,
         "estado": estado,
         "peak_day": peak

@@ -39,6 +39,7 @@ class InputData(BaseModel):
     pt_total: int
     demanda: Dict[str, float]
 
+    
 # =========================
 # API
 # =========================
